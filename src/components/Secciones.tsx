@@ -16,10 +16,22 @@ export function Encabezado2({ etiqueta, titulo, texto }: { etiqueta?: string; ti
 }
 
 const pasos = [
-  { icono: Send, titulo: "Envíame la prenda", texto: "Elige del catálogo o mándame el link de lo que quieras de cualquier tienda de EE. UU." },
-  { icono: Calculator, titulo: "Te cotizo el precio final", texto: "Un solo precio en pesos: producto, impuestos, envío y mi servicio. Sin sorpresas." },
+  {
+    icono: Send,
+    titulo: "Envíame la prenda",
+    texto: "Elige del catálogo o mándame el link de lo que quieras de cualquier tienda de EE. UU.",
+  },
+  {
+    icono: Calculator,
+    titulo: "Te cotizo el precio final",
+    texto: "Un solo precio en pesos: producto, impuestos, envío y mi servicio. Sin sorpresas.",
+  },
   { icono: ShoppingBag, titulo: "Pagas y yo compro", texto: "Con tu anticipo hago la compra y te aviso cada paso del viaje." },
-  { icono: PackageCheck, titulo: "Te llega", texto: "Te lo entrego en Bucaramanga o te lo envío a tu ciudad. Pagas el saldo al recibir." },
+  {
+    icono: PackageCheck,
+    titulo: "Te llega",
+    texto: "Te lo entrego en Bucaramanga o te lo envío a tu ciudad. Pagas el saldo al recibir.",
+  },
 ];
 
 export function ComoFunciona() {
@@ -110,7 +122,8 @@ export function TarjetasMarcas({ marcas }: { marcas: Marca[] }) {
               {m.descripcion && <p className="mt-2 text-sm text-rosegold-oscuro">{m.descripcion}</p>}
             </div>
             <span className="etiqueta inline-flex items-center gap-2">
-              Ver productos e inspiración <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" aria-hidden />
+              Ver productos e inspiración{" "}
+              <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" aria-hidden />
             </span>
           </Link>
         </li>
@@ -151,8 +164,11 @@ export function AvisoNotion({ mensaje }: { mensaje?: string }) {
   if (!mensaje) return null;
   return (
     <p className="tarjeta mx-auto max-w-xl bg-rosa-claro p-6 text-center text-rosegold-oscuro">
-      {mensaje} Mientras tanto puedes usar el <Link href="/cotizador" className="underline">cotizador</Link> o escribirme
-      por WhatsApp.
+      {mensaje} Mientras tanto puedes usar el{" "}
+      <Link href="/cotizador" className="underline">
+        cotizador
+      </Link>{" "}
+      o escribirme por WhatsApp.
     </p>
   );
 }

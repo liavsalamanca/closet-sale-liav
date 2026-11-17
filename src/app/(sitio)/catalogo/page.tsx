@@ -30,7 +30,9 @@ export default async function PaginaCatalogo() {
       )}
       <div className="tarjeta mt-16 flex flex-col items-center gap-4 bg-rosa-claro p-10 text-center">
         <h2 className="text-3xl">¿No encuentras lo que buscas?</h2>
-        <p className="max-w-md text-rosegold-oscuro">Pega el link de cualquier tienda de EE. UU. y mira el precio estimado al instante.</p>
+        <p className="max-w-md text-rosegold-oscuro">
+          Pega el link de cualquier tienda de EE. UU. y mira el precio estimado al instante.
+        </p>
         <BotonLink href="/cotizador">Ir al cotizador</BotonLink>
       </div>
     </div>

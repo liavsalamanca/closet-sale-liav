@@ -18,7 +18,11 @@ export default async function PaginaMarcas() {
         titulo="Tus marcas favoritas de EE. UU."
         texto="Entra a cada marca para ver sus productos con precio en pesos y un tablero de inspiración."
       />
-      {marcas.length === 0 ? <AvisoNotion mensaje={error ?? "Pronto verás aquí las marcas."} /> : <TarjetasMarcas marcas={marcas} />}
+      {marcas.length === 0 ? (
+        <AvisoNotion mensaje={error ?? "Pronto verás aquí las marcas."} />
+      ) : (
+        <TarjetasMarcas marcas={marcas} />
+      )}
     </div>
   );
 }

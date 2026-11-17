@@ -102,7 +102,13 @@ export function LinksGuardados({ links, recargar }: { links: LinkGuardado[]; rec
           {visibles.map((l) => (
             <li key={l.id} className="tarjeta flex flex-col overflow-hidden">
               {l.foto ? (
-                <img src={l.foto} alt="" loading="lazy" className="aspect-square w-full bg-rosa-claro object-contain" referrerPolicy="no-referrer" />
+                <img
+                  src={l.foto}
+                  alt=""
+                  loading="lazy"
+                  className="aspect-square w-full bg-rosa-claro object-contain"
+                  referrerPolicy="no-referrer"
+                />
               ) : (
                 <FotoProducto alt={l.producto} className="aspect-square w-full" />
               )}
@@ -119,11 +125,21 @@ export function LinksGuardados({ links, recargar }: { links: LinkGuardado[]; rec
                 {l.notas && <p className="text-sm text-rosegold-oscuro">“{l.notas}”</p>}
                 <div className="flex gap-3 text-sm">
                   {l.enlace && (
-                    <a href={l.enlace} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-1 underline">
+                    <a
+                      href={l.enlace}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex min-h-11 items-center gap-1 underline"
+                    >
                       Ver en tienda <ExternalLink size={14} aria-hidden />
                     </a>
                   )}
-                  <a href={l.url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-1 underline">
+                  <a
+                    href={l.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex min-h-11 items-center gap-1 underline"
+                  >
                     Notion <ExternalLink size={14} aria-hidden />
                   </a>
                 </div>
@@ -134,13 +150,26 @@ export function LinksGuardados({ links, recargar }: { links: LinkGuardado[]; rec
 
                 {!["Descartado", "Pasado a pedido"].includes(l.estado) && (
                   <div className="mt-auto flex flex-wrap gap-2 pt-3">
-                    <BotonAccion onClick={() => accion(l, "catalogo")} ocupado={ocupado === l.id + "catalogo"} icono={<Store size={16} aria-hidden />}>
+                    <BotonAccion
+                      onClick={() => accion(l, "catalogo")}
+                      ocupado={ocupado === l.id + "catalogo"}
+                      icono={<Store size={16} aria-hidden />}
+                    >
                       Pasar al catálogo
                     </BotonAccion>
-                    <BotonAccion onClick={() => accion(l, "pedido")} ocupado={ocupado === l.id + "pedido"} icono={<ShoppingBag size={16} aria-hidden />}>
+                    <BotonAccion
+                      onClick={() => accion(l, "pedido")}
+                      ocupado={ocupado === l.id + "pedido"}
+                      icono={<ShoppingBag size={16} aria-hidden />}
+                    >
                       Crear pedido para clienta
                     </BotonAccion>
-                    <BotonAccion onClick={() => accion(l, "descartar")} ocupado={ocupado === l.id + "descartar"} icono={<Trash2 size={16} aria-hidden />} suave>
+                    <BotonAccion
+                      onClick={() => accion(l, "descartar")}
+                      ocupado={ocupado === l.id + "descartar"}
+                      icono={<Trash2 size={16} aria-hidden />}
+                      suave
+                    >
                       Descartar
                     </BotonAccion>
                   </div>
@@ -202,14 +231,25 @@ export function ElegirClienta({ onElegir, onCancelar }: { onElegir: (c: Clienta)
     <div className="rounded-2xl bg-rosa-claro p-3">
       <label className="etiqueta mb-2 flex items-center gap-2 text-rosegold-oscuro">
         <UserRound size={14} aria-hidden /> ¿Para qué clienta?
-        <input className="campo mt-1 min-h-11 py-2 text-sm normal-case tracking-normal" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Nombre, WhatsApp o @instagram" autoFocus />
+        <input
+          className="campo mt-1 min-h-11 py-2 text-sm normal-case tracking-normal"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Nombre, WhatsApp o @instagram"
+          autoFocus
+        />
       </label>
       <ul className="max-h-48 overflow-auto">
         {cargando && <li className="p-2 text-sm text-rosegold-oscuro">Buscando…</li>}
-        {!cargando && lista.length === 0 && <li className="p-2 text-sm text-rosegold-oscuro">Sin resultados. Créala primero en Notion.</li>}
+        {!cargando && lista.length === 0 && (
+          <li className="p-2 text-sm text-rosegold-oscuro">Sin resultados. Créala primero en Notion.</li>
+        )}
         {lista.map((c) => (
           <li key={c.id}>
-            <button onClick={() => onElegir(c)} className="flex min-h-11 w-full flex-col items-start rounded-xl px-3 py-1 text-left text-sm hover:bg-blanco">
+            <button
+              onClick={() => onElegir(c)}
+              className="flex min-h-11 w-full flex-col items-start rounded-xl px-3 py-1 text-left text-sm hover:bg-blanco"
+            >
               <span className="font-medium">{c.nombre}</span>
               <span className="text-xs text-rosegold-oscuro">{[c.whatsapp, c.instagram].filter(Boolean).join(" · ")}</span>
             </button>

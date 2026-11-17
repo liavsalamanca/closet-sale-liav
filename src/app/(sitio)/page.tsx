@@ -23,8 +23,8 @@ export default async function Inicio() {
           <Logo tamano="lg" />
           <p className="mt-8 max-w-xl text-lg text-rosegold-oscuro sm:text-xl">
             Compro por ti en tiendas de Estados Unidos y te lo entrego en Bucaramanga.
-            <br className="hidden sm:block" /> <strong className="font-medium text-cacao">Precio final en pesos</strong>, sin letra
-            pequeña.
+            <br className="hidden sm:block" /> <strong className="font-medium text-cacao">Precio final en pesos</strong>, sin
+            letra pequeña.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <BotonLink href="/catalogo">

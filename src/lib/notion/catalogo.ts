@@ -59,7 +59,9 @@ async function leerCatalogo(): Promise<{ productos: ProductoCatalogo[]; marcas: 
       const pesoLb = leerNumero(p, "Peso estimado (lb)") ?? PESO_POR_CATEGORIA[categoria] ?? 1;
       const manual = leerNumero(p, "Precio final manual (COP)");
       const antesUSD = leerNumero(p, "Precio antes USD");
-      const marca = leerRelacion(p, "Marca").map((id) => porId.get(id)).find(Boolean);
+      const marca = leerRelacion(p, "Marca")
+        .map((id) => porId.get(id))
+        .find(Boolean);
       return {
         id: p.id,
         nombre,

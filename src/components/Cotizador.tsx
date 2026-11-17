@@ -1,5 +1,5 @@
 "use client";
-import { useId, useMemo, useState } from "react";
+import { useId, useState } from "react";
 import Link from "next/link";
 import { Check, Info, Plus } from "lucide-react";
 import { CATEGORIAS, PESOS_SUGERIDOS, type Categoria } from "@/config/negocio";
@@ -23,10 +23,7 @@ export function Cotizador({ parametros }: { parametros: ParametrosPrecio }) {
   const tipos = PESOS_SUGERIDOS.filter((p) => p.categoria === categoria);
   const peso = tipos.find((t) => t.etiqueta === tipo)?.lb ?? tipos[0]?.lb ?? 1;
   const usd = Number(precio.replace(",", "."));
-  const unidad = useMemo(
-    () => (usd > 0 ? calcularPrecio({ precioUSD: usd, pesoLb: peso }, parametros).final : 0),
-    [usd, peso, parametros],
-  );
+  const unidad = usd > 0 ? calcularPrecio({ precioUSD: usd, pesoLb: peso }, parametros).final : 0;
 
   function cambiarCategoria(c: Categoria) {
     setCategoria(c);
@@ -138,7 +135,12 @@ export function Cotizador({ parametros }: { parametros: ParametrosPrecio }) {
             <label htmlFor={`${id}-cat`} className="etiqueta mb-2 block text-rosegold-oscuro">
               Categoría
             </label>
-            <select id={`${id}-cat`} className="campo" value={categoria} onChange={(e) => cambiarCategoria(e.target.value as Categoria)}>
+            <select
+              id={`${id}-cat`}
+              className="campo"
+              value={categoria}
+              onChange={(e) => cambiarCategoria(e.target.value as Categoria)}
+            >
               {CATEGORIAS.map((c) => (
                 <option key={c}>{c}</option>
               ))}

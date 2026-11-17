@@ -2,11 +2,7 @@
 import { formatoCOP, formatoUSD } from "./precio";
 import type { DatosPedido, ItemCarrito } from "./tipos";
 
-export function construirMensaje(opts: {
-  numero?: string | number | null;
-  items: ItemCarrito[];
-  datos: DatosPedido;
-}): string {
+export function construirMensaje(opts: { numero?: string | number | null; items: ItemCarrito[]; datos: DatosPedido }): string {
   const { numero, items, datos } = opts;
   const total = items.reduce((s, i) => s + i.precioCOP * i.cantidad, 0);
   const lineas = items.map((i, n) => {

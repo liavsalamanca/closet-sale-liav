@@ -101,11 +101,7 @@ export function calcularPrecio(
 }
 
 /** Atajo: solo el precio final por unidad. */
-export function precioFinal(
-  precioUSD: number,
-  pesoLb: number,
-  p: ParametrosPrecio = PARAMETROS_POR_DEFECTO,
-): number {
+export function precioFinal(precioUSD: number, pesoLb: number, p: ParametrosPrecio = PARAMETROS_POR_DEFECTO): number {
   return calcularPrecio({ precioUSD, pesoLb }, p).final;
 }
 

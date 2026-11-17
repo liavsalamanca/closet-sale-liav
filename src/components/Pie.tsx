@@ -60,8 +60,8 @@ export function Pie() {
         </div>
       </div>
       <p className="pb-8 text-center text-xs text-rosegold-oscuro">
-        © {new Date().getFullYear()} closet sale · LIAV · Bucaramanga, Colombia. Las marcas mencionadas pertenecen a sus dueños; closet
-        sale es un servicio independiente de compras por encargo.
+        © {new Date().getFullYear()} closet sale · LIAV · Bucaramanga, Colombia. Las marcas mencionadas pertenecen a sus dueños;
+        closet sale es un servicio independiente de compras por encargo.
       </p>
     </footer>
   );

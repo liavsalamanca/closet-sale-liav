@@ -104,9 +104,7 @@ export async function crearPagina(
   properties: Record<string, any>,
 ): Promise<PaginaNotion> {
   const n = cliente();
-  return enCola(() =>
-    n.pages.create({ parent: { type: "data_source_id", data_source_id: dataSourceId }, properties }),
-  );
+  return enCola(() => n.pages.create({ parent: { type: "data_source_id", data_source_id: dataSourceId }, properties }));
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

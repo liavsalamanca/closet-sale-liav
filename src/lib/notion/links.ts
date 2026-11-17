@@ -1,7 +1,17 @@
 import "server-only";
 import { consultarTodo, crearPagina, actualizarPagina, leerPagina, linkNotion } from "./client";
 import { DS } from "./ids";
-import { escribir, leerFecha, leerNumero, leerRelacion, leerSelect, leerTexto, leerTitulo, leerUrl, type PaginaNotion } from "./props";
+import {
+  escribir,
+  leerFecha,
+  leerNumero,
+  leerRelacion,
+  leerSelect,
+  leerTexto,
+  leerTitulo,
+  leerUrl,
+  type PaginaNotion,
+} from "./props";
 import { obtenerCatalogo } from "./catalogo";
 import { crearLinea, crearPedido, refrescarPanel } from "./pedidos";
 import { PESO_POR_CATEGORIA, CATEGORIAS, type Categoria } from "@/config/negocio";

@@ -14,11 +14,7 @@ const base =
   "inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-6 py-2.5 font-sans text-sm font-medium tracking-wide transition-colors disabled:cursor-not-allowed";
 
 /** Botón tipo píldora (mínimo 44 px de alto). */
-export function Boton({
-  variante = "principal",
-  className = "",
-  ...props
-}: ComponentProps<"button"> & { variante?: Variante }) {
+export function Boton({ variante = "principal", className = "", ...props }: ComponentProps<"button"> & { variante?: Variante }) {
   return <button className={`${base} ${estilos[variante]} ${className}`} {...props} />;
 }
 

@@ -1,0 +1,19 @@
+{
+  "name": "closet-sale-guardar",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Extensión de Chrome para guardar productos en el Notion de closet sale",
+  "scripts": {
+    "build": "tsc --noEmit && vite build",
+    "dev": "vite build --watch",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.3.7",
+    "jsdom": "^31.0.1",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
+  }
+}

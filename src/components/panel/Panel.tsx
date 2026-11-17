@@ -5,6 +5,7 @@
  */
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   AlertTriangle,
   CalendarClock,
@@ -48,6 +49,8 @@ const fecha = (iso: string | null) =>
     ? new Date(iso.length === 10 ? iso + "T12:00:00" : iso).toLocaleDateString("es-CO", { day: "numeric", month: "short" })
     : "—";
 
+const enDias = (n: number) => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
+
 const hoy = () => new Intl.DateTimeFormat("en-CA", { timeZone: "America/Bogota" }).format(new Date());
 
 export function Panel({ etapas }: { etapas: string[]; instagram: string }) {
@@ -55,36 +58,41 @@ export function Panel({ etapas }: { etapas: string[]; instagram: string }) {
   const [error, setError] = useState("");
   const [cargando, setCargando] = useState(false);
   const [seccion, setSeccion] = useState<Seccion>("resumen");
+  const router = useRouter();
 
-  const cargar = useCallback(async (fresco = false) => {
-    setCargando(true);
-    try {
-      const r = await fetch(`/api/panel/datos${fresco ? "?fresco=1" : ""}`, { cache: "no-store" });
-      if (r.status === 401) {
-        window.location.href = "/panel/entrar";
-        return;
+  const cargar = useCallback(
+    async (fresco = false) => {
+      setCargando(true);
+      try {
+        const r = await fetch(`/api/panel/datos${fresco ? "?fresco=1" : ""}`, { cache: "no-store" });
+        if (r.status === 401) {
+          router.replace("/panel/entrar");
+          return;
+        }
+        const j = await r.json();
+        if (j.ok) {
+          setDatos(j.datos);
+          setError("");
+        } else setError(j.error ?? "No pude leer Notion.");
+      } catch {
+        setError("Sin conexión. Reintento en un minuto.");
+      } finally {
+        setCargando(false);
       }
-      const j = await r.json();
-      if (j.ok) {
-        setDatos(j.datos);
-        setError("");
-      } else setError(j.error ?? "No pude leer Notion.");
-    } catch {
-      setError("Sin conexión. Reintento en un minuto.");
-    } finally {
-      setCargando(false);
-    }
-  }, []);
+    },
+    [router],
+  );
 
   // Primera carga + refresco automático cada 60 s (solo con la pestaña visible)
   useEffect(() => {
-    cargar();
+    const primera = setTimeout(() => cargar(), 0);
     const t = setInterval(() => {
       if (document.visibilityState === "visible") cargar();
     }, 60_000);
     const alVolver = () => document.visibilityState === "visible" && cargar();
     document.addEventListener("visibilitychange", alVolver);
     return () => {
+      clearTimeout(primera);
       clearInterval(t);
       document.removeEventListener("visibilitychange", alVolver);
     };
@@ -92,8 +100,11 @@ export function Panel({ etapas }: { etapas: string[]; instagram: string }) {
 
   // Recordar la sección elegida
   useEffect(() => {
-    const s = sessionStorage.getItem("panel-seccion") as Seccion | null;
-    if (s && SECCIONES.some((x) => x.id === s)) setSeccion(s);
+    const t = setTimeout(() => {
+      const s = sessionStorage.getItem("panel-seccion") as Seccion | null;
+      if (s && SECCIONES.some((x) => x.id === s)) setSeccion(s);
+    }, 0);
+    return () => clearTimeout(t);
   }, []);
   useEffect(() => sessionStorage.setItem("panel-seccion", seccion), [seccion]);
 
@@ -115,7 +126,7 @@ export function Panel({ etapas }: { etapas: string[]; instagram: string }) {
 
   async function salir() {
     await fetch("/api/panel/salir", { method: "POST" });
-    window.location.href = "/panel/entrar";
+    router.replace("/panel/entrar");
   }
 
   return (
@@ -129,7 +140,8 @@ export function Panel({ etapas }: { etapas: string[]; instagram: string }) {
         </div>
         <div className="flex items-center gap-2">
           <p className="hidden text-xs text-rosegold-oscuro sm:block" aria-live="polite">
-            {datos && `Actualizado ${new Date(datos.actualizado).toLocaleTimeString("es-CO", { hour: "numeric", minute: "2-digit" })}`}
+            {datos &&
+              `Actualizado ${new Date(datos.actualizado).toLocaleTimeString("es-CO", { hour: "numeric", minute: "2-digit" })}`}
           </p>
           <button
             onClick={() => cargar(true)}
@@ -139,7 +151,11 @@ export function Panel({ etapas }: { etapas: string[]; instagram: string }) {
             {cargando ? <Loader2 size={16} className="animate-spin" aria-hidden /> : <RefreshCw size={16} aria-hidden />}
             Actualizar ahora
           </button>
-          <button onClick={salir} className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-sm hover:bg-rosa" aria-label="Cerrar sesión">
+          <button
+            onClick={salir}
+            className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-sm hover:bg-rosa"
+            aria-label="Cerrar sesión"
+          >
             <LogOut size={16} aria-hidden />
           </button>
         </div>
@@ -159,7 +175,9 @@ export function Panel({ etapas }: { etapas: string[]; instagram: string }) {
                 <s.icono size={16} aria-hidden />
                 {s.texto}
                 {s.id === "links" && datos && datos.links.filter((l) => l.estado === "Nuevo").length > 0 && (
-                  <span className="rounded-full bg-salmon px-2 text-xs text-cacao">{datos.links.filter((l) => l.estado === "Nuevo").length}</span>
+                  <span className="rounded-full bg-salmon px-2 text-xs text-cacao">
+                    {datos.links.filter((l) => l.estado === "Nuevo").length}
+                  </span>
                 )}
               </button>
             </li>
@@ -220,7 +238,12 @@ function Resumen({ datos, ir }: { datos: DatosPanel; ir: (s: Seccion) => void })
         <Cifra titulo="Por cobrar" valor={formatoCOP(r.porCobrar)} detalle="Saldo por cobrar" onClick={() => ir("cobrar")} />
         <Cifra titulo={`Utilidad de ${mes}`} valor={formatoCOP(r.utilidadMes)} detalle="Estimada, por fecha de confirmación" />
         <Cifra titulo={`Ventas de ${mes}`} valor={formatoCOP(r.ventasMes)} detalle="Total acordado" />
-        <Cifra titulo="Nuevos (Cotizando)" valor={String(r.nuevosWeb)} detalle="Pedidos por cotizar" onClick={() => ir("tablero")} />
+        <Cifra
+          titulo="Nuevos (Cotizando)"
+          valor={String(r.nuevosWeb)}
+          detalle="Pedidos por cotizar"
+          onClick={() => ir("tablero")}
+        />
       </div>
       <section>
         <h2 className="mb-4 text-3xl">Pedidos por cotizar</h2>
@@ -241,7 +264,10 @@ function Resumen({ datos, ir }: { datos: DatosPanel; ir: (s: Seccion) => void })
                 <div className="flex shrink-0 gap-1">
                   {p.whatsapp && (
                     <a
-                      href={linkWhatsApp(p.whatsapp, `¡Hola ${p.clienta.split(" ")[0]}! Te escribo por tu pedido #${p.numero} de closet sale.`)}
+                      href={linkWhatsApp(
+                        p.whatsapp,
+                        `¡Hola ${p.clienta.split(" ")[0]}! Te escribo por tu pedido #${p.numero} de closet sale.`,
+                      )}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex size-11 items-center justify-center rounded-full bg-rosa"
@@ -250,7 +276,13 @@ function Resumen({ datos, ir }: { datos: DatosPanel; ir: (s: Seccion) => void })
                       <MessageCircle size={18} aria-hidden />
                     </a>
                   )}
-                  <a href={p.url} target="_blank" rel="noopener noreferrer" className="inline-flex size-11 items-center justify-center rounded-full hover:bg-rosa" aria-label="Abrir en Notion">
+                  <a
+                    href={p.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex size-11 items-center justify-center rounded-full hover:bg-rosa"
+                    aria-label="Abrir en Notion"
+                  >
                     <ExternalLink size={18} aria-hidden />
                   </a>
                 </div>
@@ -263,7 +295,15 @@ function Resumen({ datos, ir }: { datos: DatosPanel; ir: (s: Seccion) => void })
   );
 }
 
-function SelectorEtapa({ p, etapas, onEtapa }: { p: PedidoPanel; etapas: string[]; onEtapa: (p: PedidoPanel, e: string) => void }) {
+function SelectorEtapa({
+  p,
+  etapas,
+  onEtapa,
+}: {
+  p: PedidoPanel;
+  etapas: string[];
+  onEtapa: (p: PedidoPanel, e: string) => void;
+}) {
   return (
     <label className="block">
       <span className="sr-only">Etapa del pedido #{p.numero}</span>
@@ -276,7 +316,15 @@ function SelectorEtapa({ p, etapas, onEtapa }: { p: PedidoPanel; etapas: string[
   );
 }
 
-function TarjetaPedido({ p, etapas, onEtapa }: { p: PedidoPanel; etapas: string[]; onEtapa: (p: PedidoPanel, e: string) => void }) {
+function TarjetaPedido({
+  p,
+  etapas,
+  onEtapa,
+}: {
+  p: PedidoPanel;
+  etapas: string[];
+  onEtapa: (p: PedidoPanel, e: string) => void;
+}) {
   return (
     <article className="tarjeta flex flex-col gap-2 p-4">
       <div className="flex items-start justify-between gap-2">
@@ -286,7 +334,13 @@ function TarjetaPedido({ p, etapas, onEtapa }: { p: PedidoPanel; etapas: string[
           </p>
           <p className="truncate text-xs text-rosegold-oscuro">{p.titulo}</p>
         </div>
-        <a href={p.url} target="_blank" rel="noopener noreferrer" className="inline-flex size-9 shrink-0 items-center justify-center rounded-full hover:bg-rosa" aria-label={`Abrir pedido #${p.numero} en Notion`}>
+        <a
+          href={p.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex size-9 shrink-0 items-center justify-center rounded-full hover:bg-rosa"
+          aria-label={`Abrir pedido #${p.numero} en Notion`}
+        >
           <ExternalLink size={16} aria-hidden />
         </a>
       </div>
@@ -312,13 +366,26 @@ function TarjetaPedido({ p, etapas, onEtapa }: { p: PedidoPanel; etapas: string[
   );
 }
 
-function Tablero({ pedidos, etapas, onEtapa }: { pedidos: PedidoPanel[]; etapas: string[]; onEtapa: (p: PedidoPanel, e: string) => void }) {
+function Tablero({
+  pedidos,
+  etapas,
+  onEtapa,
+}: {
+  pedidos: PedidoPanel[];
+  etapas: string[];
+  onEtapa: (p: PedidoPanel, e: string) => void;
+}) {
   const [verCerrados, setVerCerrados] = useState(false);
   const columnas = etapas.filter((e) => verCerrados || !CERRADAS.includes(e));
   return (
     <div>
       <label className="mb-4 inline-flex min-h-11 cursor-pointer items-center gap-2 text-sm">
-        <input type="checkbox" checked={verCerrados} onChange={(e) => setVerCerrados(e.target.checked)} className="size-5 accent-cacao" />
+        <input
+          type="checkbox"
+          checked={verCerrados}
+          onChange={(e) => setVerCerrados(e.target.checked)}
+          className="size-5 accent-cacao"
+        />
         Mostrar entregados, cancelados y rechazados
       </label>
       <div className="-mx-4 overflow-x-auto px-4 pb-4">
@@ -326,7 +393,11 @@ function Tablero({ pedidos, etapas, onEtapa }: { pedidos: PedidoPanel[]; etapas:
           {columnas.map((e) => {
             const suyos = pedidos.filter((p) => p.etapa === e);
             return (
-              <section key={e} className="w-72 shrink-0 rounded-[24px] bg-rosa-claro p-3" aria-label={`${e}: ${suyos.length} pedidos`}>
+              <section
+                key={e}
+                className="w-72 shrink-0 rounded-[24px] bg-rosa-claro p-3"
+                aria-label={`${e}: ${suyos.length} pedidos`}
+              >
                 <h3 className="etiqueta mb-3 flex items-center justify-between px-1 not-italic">
                   <span className="font-sans">{e}</span>
                   <span className="rounded-full bg-blanco px-2 py-0.5">{suyos.length}</span>
@@ -384,7 +455,13 @@ function PorCobrar({ pedidos }: { pedidos: PedidoPanel[] }) {
                   <MessageCircle size={16} aria-hidden /> Cobrar
                 </a>
               )}
-              <a href={p.url} target="_blank" rel="noopener noreferrer" className="inline-flex size-11 items-center justify-center rounded-full hover:bg-rosa" aria-label="Abrir en Notion">
+              <a
+                href={p.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex size-11 items-center justify-center rounded-full hover:bg-rosa"
+                aria-label="Abrir en Notion"
+              >
                 <ExternalLink size={18} aria-hidden />
               </a>
             </div>
@@ -424,11 +501,22 @@ function PorComprar({ datos }: { datos: DatosPanel }) {
                 </div>
                 <div className="flex shrink-0 gap-1">
                   {l.enlace && (
-                    <a href={l.enlace} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-1 rounded-full bg-rosa px-3 text-sm">
+                    <a
+                      href={l.enlace}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex min-h-11 items-center gap-1 rounded-full bg-rosa px-3 text-sm"
+                    >
                       Tienda <ExternalLink size={14} aria-hidden />
                     </a>
                   )}
-                  <a href={l.url} target="_blank" rel="noopener noreferrer" className="inline-flex size-11 items-center justify-center rounded-full hover:bg-rosa" aria-label="Abrir línea en Notion">
+                  <a
+                    href={l.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex size-11 items-center justify-center rounded-full hover:bg-rosa"
+                    aria-label="Abrir línea en Notion"
+                  >
                     <ExternalLink size={18} aria-hidden />
                   </a>
                 </div>
@@ -443,7 +531,7 @@ function PorComprar({ datos }: { datos: DatosPanel }) {
 
 function Entregas({ pedidos }: { pedidos: PedidoPanel[] }) {
   const h = hoy();
-  const en14 = new Date(Date.now() + 14 * 864e5).toISOString().slice(0, 10);
+  const en14 = enDias(14);
   const activos = pedidos.filter((p) => !CERRADAS.includes(p.etapa) && !COTIZACION.includes(p.etapa));
   const atrasados = activos.filter((p) => p.atrasado || (p.fechaPrometida && p.fechaPrometida.slice(0, 10) < h));
   const proximos = activos
@@ -451,7 +539,17 @@ function Entregas({ pedidos }: { pedidos: PedidoPanel[] }) {
     .sort((a, b) => (a.fechaPrometida ?? "").localeCompare(b.fechaPrometida ?? ""));
   const sinFecha = activos.filter((p) => !p.fechaPrometida && !atrasados.includes(p));
 
-  const Lista = ({ titulo, lista, vacio }: { titulo: string; lista: PedidoPanel[]; vacio: string }) => (
+  return (
+    <div className="space-y-10">
+      <ListaEntregas titulo="Atrasados" lista={atrasados} vacio="Ningún pedido atrasado. ✓" />
+      <ListaEntregas titulo="Próximos 14 días" lista={proximos} vacio="No hay entregas prometidas en los próximos 14 días." />
+      {sinFecha.length > 0 && <ListaEntregas titulo="Sin fecha prometida" lista={sinFecha} vacio="" />}
+    </div>
+  );
+}
+
+function ListaEntregas({ titulo, lista, vacio }: { titulo: string; lista: PedidoPanel[]; vacio: string }) {
+  return (
     <section>
       <h2 className="mb-3 text-3xl">{titulo}</h2>
       {lista.length === 0 ? (
@@ -469,7 +567,13 @@ function Entregas({ pedidos }: { pedidos: PedidoPanel[] }) {
                 </p>
                 {p.alerta && <p className="text-xs">{p.alerta}</p>}
               </div>
-              <a href={p.url} target="_blank" rel="noopener noreferrer" className="inline-flex size-11 shrink-0 items-center justify-center rounded-full hover:bg-rosa" aria-label="Abrir en Notion">
+              <a
+                href={p.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex size-11 shrink-0 items-center justify-center rounded-full hover:bg-rosa"
+                aria-label="Abrir en Notion"
+              >
                 <ExternalLink size={18} aria-hidden />
               </a>
             </li>
@@ -477,13 +581,5 @@ function Entregas({ pedidos }: { pedidos: PedidoPanel[] }) {
         </ul>
       )}
     </section>
-  );
-
-  return (
-    <div className="space-y-10">
-      <Lista titulo="Atrasados" lista={atrasados} vacio="Ningún pedido atrasado. ✓" />
-      <Lista titulo="Próximos 14 días" lista={proximos} vacio="No hay entregas prometidas en los próximos 14 días." />
-      {sinFecha.length > 0 && <Lista titulo="Sin fecha prometida" lista={sinFecha} vacio="" />}
-    </div>
   );
 }

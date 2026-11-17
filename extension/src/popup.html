@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>closet sale · guardar</title>
+    <link rel="stylesheet" href="./popup.css" />
+  </head>
+  <body>
+    <header class="cabecera">
+      <div class="logo" aria-label="closet sale LIAV">
+        <span class="logo-texto">closet sale</span>
+        <span class="logo-sub"><i></i>LIAV<i></i></span>
+      </div>
+      <button id="btn-ajustes" class="icono" type="button" aria-label="Ajustes">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </header>
+
+    <!-- AJUSTES -->
+    <section id="vista-ajustes" hidden>
+      <h1>Ajustes</h1>
+      <p class="ayuda">Pégalos una sola vez. Se guardan solo en este Chrome.</p>
+      <form id="form-ajustes" class="pila">
+        <label>
+          <span class="etiqueta">URL de tu web</span>
+          <input id="aj-sitio" class="campo" placeholder="https://closetsaleliav.vercel.app" required />
+        </label>
+        <label>
+          <span class="etiqueta">Clave de la extensión</span>
+          <input id="aj-clave" class="campo" type="password" placeholder="EXTENSION_API_KEY" required />
+        </label>
+        <p id="aj-msg" class="mensaje" role="status"></p>
+        <button class="boton" type="submit">Guardar ajustes</button>
+        <button id="aj-cancelar" class="boton secundario" type="button">Volver</button>
+      </form>
+    </section>
+
+    <!-- CARGANDO -->
+    <section id="vista-cargando" class="centro" hidden>
+      <p class="ayuda">Leyendo el producto…</p>
+    </section>
+
+    <!-- FORMULARIO -->
+    <section id="vista-form" hidden>
+      <form id="form" class="pila" novalidate>
+        <div class="producto">
+          <img id="foto" alt="" referrerpolicy="no-referrer" hidden />
+          <div class="producto-info">
+            <span id="tienda" class="etiqueta"></span>
+            <span id="fuente" class="ayuda"></span>
+          </div>
+        </div>
+
+        <label>
+          <span class="etiqueta">Producto</span>
+          <input id="nombre" class="campo" required />
+        </label>
+        <label>
+          <span class="etiqueta">Link</span>
+          <input id="enlace" class="campo" type="url" />
+        </label>
+
+        <div class="fila">
+          <label>
+            <span class="etiqueta">Precio USD</span>
+            <input id="precio" class="campo" inputmode="decimal" placeholder="0.00" />
+          </label>
+          <label>
+            <span class="etiqueta">Cantidad</span>
+            <input id="cantidad" class="campo" type="number" min="1" max="20" value="1" />
+          </label>
+        </div>
+        <div class="fila">
+          <label>
+            <span class="etiqueta">Categoría</span>
+            <select id="categoria" class="campo"></select>
+          </label>
+          <label>
+            <span class="etiqueta">Peso (lb)</span>
+            <input id="peso" class="campo" inputmode="decimal" />
+          </label>
+        </div>
+        <label>
+          <span class="etiqueta">Talla / color</span>
+          <input id="variante" class="campo" placeholder="Ej. M · Negro" />
+        </label>
+        <label>
+          <span class="etiqueta">Nota</span>
+          <input id="notas" class="campo" />
+        </label>
+
+        <div class="precio-final" aria-live="polite">
+          <span class="etiqueta">Precio final estimado</span>
+          <strong id="cop">$ —</strong>
+          <span id="cop-detalle" class="ayuda"></span>
+        </div>
+
+        <fieldset>
+          <legend class="etiqueta">¿Para qué lo guardo?</legend>
+          <div class="segmentos">
+            <label><input type="radio" name="destino" value="idea" checked /><span>Idea</span></label>
+            <label><input type="radio" name="destino" value="catalogo" /><span>Al catálogo</span></label>
+            <label><input type="radio" name="destino" value="clienta" /><span>Para clienta</span></label>
+          </div>
+        </fieldset>
+
+        <div id="bloque-clienta" class="pila" hidden>
+          <label>
+            <span class="etiqueta">Clienta</span>
+            <input id="buscar-clienta" class="campo" placeholder="Nombre, WhatsApp o @instagram" autocomplete="off"
+              role="combobox" aria-expanded="false" aria-controls="lista-clientas" aria-autocomplete="list" />
+          </label>
+          <ul id="lista-clientas" class="lista" role="listbox" hidden></ul>
+          <label id="bloque-pedido" hidden>
+            <span class="etiqueta">Pedido</span>
+            <select id="pedido" class="campo"></select>
+          </label>
+        </div>
+
+        <p id="msg" class="mensaje" role="alert"></p>
+        <button id="btn-guardar" class="boton" type="submit">Guardar</button>
+        <p id="pendientes" class="ayuda centro" hidden></p>
+      </form>
+    </section>
+
+    <!-- ÉXITO -->
+    <section id="vista-exito" class="centro pila" hidden>
+      <div class="check" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h1 id="exito-titulo">¡Guardado! ✓</h1>
+      <p id="exito-texto" class="ayuda"></p>
+      <a id="exito-link" class="boton" href="#" target="_blank" rel="noopener">Abrir en Notion</a>
+      <button id="btn-otro" class="boton secundario" type="button">Guardar otro</button>
+    </section>
+
+    <script type="module" src="./popup.ts"></script>
+  </body>
+</html>

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Menu, ShoppingBag, X } from "lucide-react";
 import { Logo } from "./Logo";
 import { useCarrito } from "@/lib/carrito";
@@ -19,7 +19,11 @@ export function Encabezado() {
   const { cantidadTotal } = useCarrito();
 
   // Cierra el menú del celular al cambiar de página
-  useEffect(() => setAbierto(false), [ruta]);
+  const [rutaAnterior, setRutaAnterior] = useState(ruta);
+  if (rutaAnterior !== ruta) {
+    setRutaAnterior(ruta);
+    setAbierto(false);
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-rosegold/20 bg-crema/90 backdrop-blur">

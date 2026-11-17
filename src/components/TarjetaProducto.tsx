@@ -44,9 +44,7 @@ export function TarjetaProducto({ producto: p }: { producto: ProductoCatalogo })
       <div className="relative">
         <FotoProducto src={p.fotos[0]} alt={p.nombre} className="aspect-[4/5] w-full" />
         {p.descuento ? (
-          <span className="etiqueta absolute left-3 top-3 rounded-full bg-salmon px-3 py-1.5 text-cacao">
-            −{p.descuento}%
-          </span>
+          <span className="etiqueta absolute left-3 top-3 rounded-full bg-salmon px-3 py-1.5 text-cacao">−{p.descuento}%</span>
         ) : null}
       </div>
 

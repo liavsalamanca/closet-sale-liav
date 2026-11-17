@@ -15,7 +15,10 @@ export default function NoEncontrada() {
         </p>
       </div>
       <div className="flex flex-wrap justify-center gap-3">
-        <Link href="/catalogo" className="inline-flex min-h-11 items-center rounded-full bg-cacao px-6 text-sm font-medium text-crema">
+        <Link
+          href="/catalogo"
+          className="inline-flex min-h-11 items-center rounded-full bg-cacao px-6 text-sm font-medium text-crema"
+        >
           Ver catálogo
         </Link>
         <Link href="/" className="inline-flex min-h-11 items-center rounded-full border border-cacao px-6 text-sm font-medium">

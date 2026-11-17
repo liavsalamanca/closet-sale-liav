@@ -1,12 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  calcularPrecio,
-  formatoCOP,
-  PARAMETROS_POR_DEFECTO,
-  porcentajeDescuento,
-  precioFinal,
-  redondearPrecio,
-} from "./precio";
+import { calcularPrecio, formatoCOP, PARAMETROS_POR_DEFECTO, porcentajeDescuento, precioFinal, redondearPrecio } from "./precio";
 
 describe("redondearPrecio (4.900 / 9.900)", () => {
   it("sube al siguiente precio terminado en 4.900 o 9.900", () => {
@@ -81,5 +74,21 @@ describe("utilidades", () => {
   });
   it("formatoCOP usa punto de miles", () => {
     expect(formatoCOP(134900)).toBe("$134.900");
+  });
+});
+
+import { limpiarLink, tiendaDesdeLink } from "./util";
+describe("links", () => {
+  it("quita rastreo y deja lo útil", () => {
+    expect(limpiarLink("https://www.nike.com/t/x?utm_source=ig&color=white&size=M#reviews")).toBe(
+      "https://www.nike.com/t/x?color=white&size=M",
+    );
+    expect(limpiarLink("https://www.amazon.com/dp/B0?th=1&psc=1&tag=abc-20")).toBe("https://www.amazon.com/dp/B0");
+    expect(limpiarLink("https://www.sephora.com/p?skuId=1&src=home")).toBe("https://www.sephora.com/p?skuId=1&src=home");
+  });
+  it("nombre de tienda", () => {
+    expect(tiendaDesdeLink("https://www.gymshark.com/products/x")).toBe("Gymshark");
+    expect(tiendaDesdeLink("https://shop.lululemon.com/p/x")).toBe("Lululemon");
+    expect(tiendaDesdeLink("https://www.miTienda.com/x")).toBe("Mitienda");
   });
 });

@@ -28,7 +28,48 @@ export function mismoTelefono(a: string, b: string): boolean {
 export function limpiarLink(url: string): string {
   try {
     const u = new URL(url);
-    const basura = /^(utm_|fbclid|gclid|gbraid|wbraid|msclkid|mc_|_ga|_gl|igshid|ref_?$|ref_src|spm|clickid|irclickid|cjevent|ranMID|ranEAID|ranSiteID|sc_|epik|pp|psc|smid|th|content-id|pd_rd_|pf_rd_|qid|sr|crid|sprefix|dib|dib_tag|keywords)/i;
+    // Prefijos de rastreo (utm_source, pd_rd_w, ...) y nombres exactos (th, psc, ...)
+    const prefijos = /^(utm_|pd_rd_|pf_rd_|mc_|_ga|_gl|sc_|ran)/i;
+    const exactos = new Set([
+      "fbclid",
+      "gclid",
+      "gbraid",
+      "wbraid",
+      "msclkid",
+      "igshid",
+      "igsh",
+      "ref",
+      "ref_",
+      "ref_src",
+      "spm",
+      "clickid",
+      "irclickid",
+      "cjevent",
+      "epik",
+      "pp",
+      "psc",
+      "smid",
+      "th",
+      "qid",
+      "sr",
+      "crid",
+      "sprefix",
+      "dib",
+      "dib_tag",
+      "keywords",
+      "content-id",
+      "srsltid",
+      "si",
+      "mkt_tok",
+      "_hsenc",
+      "_hsmi",
+      "trk",
+      "trkid",
+      "cmpid",
+      "linkcode",
+      "tag",
+    ]);
+    const basura = { test: (k: string) => prefijos.test(k) || exactos.has(k.toLowerCase()) };
     for (const k of [...u.searchParams.keys()]) if (basura.test(k)) u.searchParams.delete(k);
     u.hash = "";
     return u.toString();

@@ -15,7 +15,14 @@ type Resultado = { mensaje: string; numero: number | null; contacto: DatosPedido
 export function FormularioPedido({ contacto }: { contacto: Contacto }) {
   const id = useId();
   const { items, total, cambiarCantidad, quitar, vaciar } = useCarrito();
-  const [datos, setDatos] = useState<DatosPedido>({ nombre: "", whatsapp: "", instagram: "", ciudad: "Bucaramanga", contacto: "WhatsApp", notas: "" });
+  const [datos, setDatos] = useState<DatosPedido>({
+    nombre: "",
+    whatsapp: "",
+    instagram: "",
+    ciudad: "Bucaramanga",
+    contacto: "WhatsApp",
+    notas: "",
+  });
   const [errores, setErrores] = useState<Record<string, string>>({});
   const [enviando, setEnviando] = useState(false);
   const [resultado, setResultado] = useState<Resultado | null>(null);
@@ -152,12 +159,20 @@ export function FormularioPedido({ contacto }: { contacto: Contacto }) {
     return (
       <div className="tarjeta mx-auto flex max-w-xl flex-col items-center gap-4 p-10 text-center">
         <h2 className="text-3xl">Tu pedido está vacío</h2>
-        <p className="text-rosegold-oscuro">Agrega productos del catálogo o cotiza lo que quieras de cualquier tienda de EE. UU.</p>
+        <p className="text-rosegold-oscuro">
+          Agrega productos del catálogo o cotiza lo que quieras de cualquier tienda de EE. UU.
+        </p>
         <div className="flex flex-wrap justify-center gap-3">
-          <Link href="/catalogo" className="inline-flex min-h-11 items-center rounded-full bg-cacao px-6 text-sm font-medium text-crema">
+          <Link
+            href="/catalogo"
+            className="inline-flex min-h-11 items-center rounded-full bg-cacao px-6 text-sm font-medium text-crema"
+          >
             Ver catálogo
           </Link>
-          <Link href="/cotizador" className="inline-flex min-h-11 items-center rounded-full border border-cacao px-6 text-sm font-medium">
+          <Link
+            href="/cotizador"
+            className="inline-flex min-h-11 items-center rounded-full border border-cacao px-6 text-sm font-medium"
+          >
             Ir al cotizador
           </Link>
         </div>
@@ -207,7 +222,12 @@ export function FormularioPedido({ contacto }: { contacto: Contacto }) {
                     .join(" · ")}
                 </p>
                 {i.enlace && (
-                  <a href={i.enlace} target="_blank" rel="noopener noreferrer" className="truncate text-xs text-rosegold-oscuro underline">
+                  <a
+                    href={i.enlace}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="truncate text-xs text-rosegold-oscuro underline"
+                  >
                     {i.enlace}
                   </a>
                 )}
@@ -263,7 +283,13 @@ export function FormularioPedido({ contacto }: { contacto: Contacto }) {
           Tus datos
         </h2>
         {campo("nombre", "Nombre", { autoComplete: "name", required: true })}
-        {campo("whatsapp", "WhatsApp", { type: "tel", inputMode: "tel", autoComplete: "tel", placeholder: "300 123 4567", required: true })}
+        {campo("whatsapp", "WhatsApp", {
+          type: "tel",
+          inputMode: "tel",
+          autoComplete: "tel",
+          placeholder: "300 123 4567",
+          required: true,
+        })}
         {campo("instagram", "Usuario de Instagram (opcional)", { placeholder: "@tuusuario", autoCapitalize: "none" })}
         {campo("ciudad", "Ciudad", { autoComplete: "address-level2", required: true })}
 
@@ -315,7 +341,13 @@ export function FormularioPedido({ contacto }: { contacto: Contacto }) {
           disabled={enviando}
           className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-cacao px-6 text-sm font-medium text-crema hover:bg-[#2c1f1c] disabled:opacity-60"
         >
-          {enviando ? <Loader2 size={18} className="animate-spin" aria-hidden /> : datos.contacto === "WhatsApp" ? <MessageCircle size={18} aria-hidden /> : <IconoInstagram />}
+          {enviando ? (
+            <Loader2 size={18} className="animate-spin" aria-hidden />
+          ) : datos.contacto === "WhatsApp" ? (
+            <MessageCircle size={18} aria-hidden />
+          ) : (
+            <IconoInstagram />
+          )}
           {enviando ? "Enviando…" : `Enviar pedido por ${datos.contacto}`}
         </button>
       </form>

@@ -9,8 +9,7 @@ export type PaginaNotion = { id: string; url: string; created_time: string; prop
 
 const prop = (p: PaginaNotion, nombre: string) => p.properties?.[nombre];
 
-const textoPlano = (rich: { plain_text?: string }[] | undefined) =>
-  (rich ?? []).map((t) => t.plain_text ?? "").join("");
+const textoPlano = (rich: { plain_text?: string }[] | undefined) => (rich ?? []).map((t) => t.plain_text ?? "").join("");
 
 export function leerTitulo(p: PaginaNotion, nombre: string): string {
   return textoPlano(prop(p, nombre)?.title).trim();

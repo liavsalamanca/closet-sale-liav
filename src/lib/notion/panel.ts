@@ -107,7 +107,10 @@ async function leerPanel(): Promise<DatosPanel> {
 
   const activos = pedidos.filter((p) => !cerrada(p.etapa));
   const delMes = pedidos.filter(
-    (p) => p.fechaConfirmacion && mesColombia(p.fechaConfirmacion.slice(0, 10)) === mes && !["Cancelado", "Rechazada"].includes(p.etapa),
+    (p) =>
+      p.fechaConfirmacion &&
+      mesColombia(p.fechaConfirmacion.slice(0, 10)) === mes &&
+      !["Cancelado", "Rechazada"].includes(p.etapa),
   );
 
   // Por comprar: líneas sin compra de pedidos ya confirmados
@@ -164,4 +167,3 @@ const panelEnCache = unstable_cache(leerPanel, ["panel-v1"], { revalidate: 60, t
 export async function obtenerDatosPanel(): Promise<DatosPanel> {
   return panelEnCache();
 }
-
