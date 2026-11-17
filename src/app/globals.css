@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+/* Paleta closet sale */
+@theme {
+  --color-crema: #fbf5ef;
+  --color-rosa: #f4d9d6;
+  --color-rosa-claro: #f9ebe8;
+  --color-salmon: #e8a598;
+  --color-rosegold: #b7826f;
+  --color-rosegold-oscuro: #8c5a4a;
+  --color-cacao: #3b2a26;
+  --color-blanco: #ffffff;
+
+  --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-sans: var(--font-jost), "Jost", system-ui, sans-serif;
+
+  --radius-tarjeta: 26px;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--color-crema);
+    color: var(--color-cacao);
+    font-family: var(--font-sans);
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-cacao);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  ::selection {
+    background: var(--color-rosa);
+  }
+}
+
+@layer components {
+  /* Etiqueta en mayúsculas con letras espaciadas */
+  .etiqueta {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .tarjeta {
+    background: var(--color-blanco);
+    border-radius: var(--radius-tarjeta);
+    box-shadow: 0 1px 0 rgb(59 42 38 / 0.04), 0 12px 32px -18px rgb(59 42 38 / 0.18);
+  }
+  .campo {
+    width: 100%;
+    min-height: 48px;
+    border-radius: 16px;
+    border: 1px solid rgb(183 130 111 / 0.45);
+    background: var(--color-blanco);
+    padding: 0.7rem 1rem;
+    font-size: 1rem;
+    color: var(--color-cacao);
+  }
+  .campo:focus {
+    outline: 2px solid var(--color-cacao);
+    outline-offset: 1px;
+    border-color: transparent;
+  }
+  .campo::placeholder {
+    color: rgb(140 90 74 / 0.7);
+  }
+  .linea-rosegold {
+    height: 1px;
+    background: var(--color-rosegold);
+  }
+}
+
+/* Pinterest: que el tablero no se salga del contenedor */
+.pinterest-tablero span[class^="PIN_"],
+.pinterest-tablero span[class*=" PIN_"] {
+  max-width: 100% !important;
+}
